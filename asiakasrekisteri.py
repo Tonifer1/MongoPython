@@ -3,10 +3,12 @@ from bson import ObjectId
 
 # Yhteys MongoDB:hen
 client = MongoClient("mongodb://localhost:27017/")
-db = client["jasenrekisteri"]
-collection = db["jasenet"]
+db = client["jasenrekisteri"]  # Valitsee tai luo jasenrekisteri-nimisen tietokannan
+collection = db["jasenet"]   # Valitaan jasenrekisteri-tietokannan sisällä oleva kokoelma, nimeltä jasenet.
 
 # Lisää uusi jäsen
+# luo Pythonin sanakirjan {} (dict)
+# collection.insert_one = MongoDB-kirjaston tarjoama sisäänrakennettu metodi.
 def lisaa_jasen(etunimi, sukunimi, osoite, postinumero, puhelin, sahkoposti, jasenyydenAlkuPvm):
     jasen = {
         "etunimi": etunimi,
@@ -20,11 +22,13 @@ def lisaa_jasen(etunimi, sukunimi, osoite, postinumero, puhelin, sahkoposti, jas
     collection.insert_one(jasen)
     print("Jäsen lisätty onnistuneesti.")
 
-# Lue jäsenet
+
+# Pythonin oma splat-operaattori purkaa kaikki haetut jäsenet find-kyselyn tuloksesta, 
+# ja sep="\n" määrittää, että jokainen jäsen tulostetaan omalle rivilleen.
 def hae_jasenet():
-    jasenet = collection.find()
-    for jasen in jasenet:
-        print(jasen)
+    print(*collection.find(), sep="\n")
+
+
 
 # Päivitä jäsenen tietoja
 def paivita_jasen(jasen_id, paivitykset):
