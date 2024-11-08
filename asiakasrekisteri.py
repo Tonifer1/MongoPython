@@ -4,11 +4,12 @@ from bson import ObjectId
 # Yhteys MongoDB:hen
 client = MongoClient("mongodb://localhost:27017/")
 db = client["jasenrekisteri"]  # Valitsee tai luo jasenrekisteri-nimisen tietokannan
-collection = db["jasenet"]   # Valitaan jasenrekisteri-tietokannan sisällä oleva kokoelma, nimeltä jasenet.
+collection = db["jasenet"]   # Valitaan jasenrekisteri-tietokannan sisällä oleva collection, nimeltä jasenet.
 
 # Lisää uusi jäsen
 # luo Pythonin sanakirjan {} (dict)
 # collection.insert_one = MongoDB-kirjaston tarjoama sisäänrakennettu metodi.
+
 def lisaa_jasen(etunimi, sukunimi, osoite, postinumero, puhelin, sahkoposti, jasenyydenAlkuPvm):
     jasen = {
         "etunimi": etunimi,
@@ -25,6 +26,7 @@ def lisaa_jasen(etunimi, sukunimi, osoite, postinumero, puhelin, sahkoposti, jas
 
 # Pythonin oma splat-operaattori purkaa kaikki haetut jäsenet find-kyselyn tuloksesta, 
 # ja sep="\n" määrittää, että jokainen jäsen tulostetaan omalle rivilleen.
+
 def hae_jasenet():
     print(*collection.find(), sep="\n")
 
@@ -46,6 +48,14 @@ def poista_jasen(jasen_id):
     else:
         print("Jäsentä ei löytynyt.")
 
+# Hae yksittäinen jäsen
+def hae_jasen(jasen_id):
+    result = collection.find_one({"_id": jasen_id})
+    if result:
+        print("Jäsen löytyi:", result)
+    else:
+        print("Jäsentä ei löytynyt.")
+
 
 
 while True:
@@ -54,6 +64,7 @@ while True:
     print("2: Hae kaikki jäsenet")
     print("3: Päivitä jäsen")
     print("4: Poista jäsen")
+    print("5: Hae yksittäinen jäsen")
     print("0: Lopeta")
     valinta = input("Syötä valintasi: ")
 
@@ -86,6 +97,10 @@ while True:
         case "4":
             jasen_id = input("Syötä jäsenen _id (kopioi MongoDB:stä): ")
             poista_jasen(ObjectId(jasen_id))
+
+        case "5":
+            jasen_id = input("Syötä jäsenen _id (kopioi MongoDB:stä): ")
+            hae_jasen(ObjectId(jasen_id))
 
         case "0":
             print("Ohjelma lopetetaan.")
